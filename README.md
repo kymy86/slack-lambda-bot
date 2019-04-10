@@ -7,7 +7,6 @@ The Deploy bot reacts to the following keywords:
 - `help`: Shows a short help
 - `hello`:  Say hi to you
 - `action`: Perform a demo action by saving a simple json file in a S3 bucket
-
     ![](assets/actiongif.gif)
 
 
@@ -17,7 +16,6 @@ The Deploy bot reacts to the following keywords:
 1. `AWS_PROFILE`: the AWS CLI profile
 2. `SLACK_SIGNING`: the Slack Signing Secret
 3. `SLACK_BOT_TOKEN`: the Slack Bot User OAuth Access Token
-5. `CIRCLECI_TOKEN`: the CircleCI token used to query CircleCI build status
 
 Use `sls plugin install -n serverless-python-requirements` to install the requirements.txt serverless plugin.
 Use `sls deploy` to deploy the lambda functions.
