@@ -1,0 +1,84 @@
+service: slack-lambda-bot
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+frameworkVersion: ">=1.28.0 <2.0.0"
+
+plugins:
+  - serverless-python-requirements
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+    noDeploy:
+      - pylint
+
+provider:
+  name: aws
+  runtime: python3.6
+# you can overwrite defaults here
+  stage: prod
+  region: eu-west-1
+  profile: ${env:AWS_PROFILE}
+  environment:
+    SECRET: ${env:SLACK_SIGNING}
+    SLACK_BOT_TOKEN: ${env:SLACK_BOT_TOKEN}
+
+# you can add statements to the Lambda function's IAM Role here
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - logs:CreateLogGroup
+        - logs:CreateLogStream
+        - logs:PutLogEvents
+        - s3:ListAllMyBuckets
+      Resource: "*"
+    - Effect: Allow
+      Action: "s3:*"
+      Resource: 
+        Fn::Join:
+          - ""
+          - - "arn:aws:s3:::"
+            - Ref: MessageBucket
+            - "/*"
+
+package:
+ exclude:
+   - requirements.txt
+   - .serverless
+   - .git
+   - .venv
+   - node_modules
+   - package-lock.json
+   - package.json
+   - template.yml
+   - serverless.yml
+   - source.sh
+ include:
+   - ./*
+
+functions:
+  entrypoint:
+    handler: main.lambda_handler
+    description: Entry point for the Slack Bot
+    events:
+      - http:
+          path: /
+          method: post
+  handleuserchoice:
+    handler: handleuser.lambda_handler
+    description: Manage the user action. According with the choice, different actions will be performed
+    environment:
+      BUCKET_NAME: ${self:resources.Outputs.BucketName.Value}
+    events:
+      - http:
+          path: /handle
+          method: post
+resources:
+  Resources:
+    MessageBucket:
+      Type: AWS::S3::Bucket
+  Outputs:
+    BucketName:
+      Value:
+        Ref: MessageBucket

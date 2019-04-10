@@ -1,0 +1,8 @@
+.DS_Store
+.venv
+node_modules
+.vscode
+source.sh
+.python-version
+.serverless
+__pycache__/
