@@ -2,7 +2,7 @@
 .venv
 node_modules
 .vscode
-source.sh
+env.sh
 .python-version
 .serverless
 __pycache__/

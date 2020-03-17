@@ -1,6 +1,6 @@
 import json
 import os
-from slackclient import SlackClient
+from slack import WebClient
 from ext.tools import bot_logger, authenticate_request, is_bot_message
 from ext.parserequest import ParseRequest
 
@@ -18,7 +18,7 @@ def lambda_handler(event: dict, context: dict) -> dict:
 
     authenticate_request(event, SECRET)
 
-    sc = SlackClient(SLACK_BOT_TOKEN)
+    sc = WebClient(SLACK_BOT_TOKEN)
     _LOGGER.info(event)
 
     if not is_bot_message(request['event']):
@@ -28,7 +28,7 @@ def lambda_handler(event: dict, context: dict) -> dict:
             sc.api_call(
                 'chat.postMessage',
                 channel=request['event']['channel'],
-                text="Hello <@{}> :hugging_face:".format(request['event']['user']))
+                text=f"Hello <@{request['event']['user']}> :hugging_face:")
             return {'statusCode':200,"body":""}
         #handle the action request
         elif parser.is_action_request():
@@ -41,7 +41,7 @@ def lambda_handler(event: dict, context: dict) -> dict:
             return {'statusCode':200,"body":""}
         #handle the help request
         elif parser.is_help_request():
-            text = """Hi <@{}>! :male-teacher: If you digit `action` you can decide what to do!""".format(request['event']['user'])
+            text = f"""Hi <@{request['event']['user']}>! :male-teacher: If you digit `action` you can decide what to do!"""
             sc.api_call(
                 'chat.postMessage',
                 channel=request['event']['channel'],
@@ -52,7 +52,7 @@ def lambda_handler(event: dict, context: dict) -> dict:
             sc.api_call(
                 'chat.postMessage', 
                 channel=request['event']['channel'],
-                text="Sorry, <@{}> I can't undertand :cry:".format(request['event']['user'])
+                text=f"Sorry, <@{request['event']['user']}> I can't undertand :cry:"
             )
             return {'statusCode':200,"body":""}
 
