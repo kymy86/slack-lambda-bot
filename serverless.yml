@@ -1,8 +1,5 @@
 service: slack-lambda-bot
 
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
-# frameworkVersion: "=X.X.X"
 frameworkVersion: ">=1.28.0 <2.0.0"
 
 plugins:
@@ -12,10 +9,11 @@ custom:
     dockerizePip: non-linux
     noDeploy:
       - pylint
+      - autopep8
 
 provider:
   name: aws
-  runtime: python3.6
+  runtime: python3.8
 # you can overwrite defaults here
   stage: prod
   region: eu-west-1
@@ -51,9 +49,8 @@ package:
    - node_modules
    - package-lock.json
    - package.json
-   - template.yml
    - serverless.yml
-   - source.sh
+   - env.sh
  include:
    - ./*
 
